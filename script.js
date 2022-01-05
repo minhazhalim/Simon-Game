@@ -17,27 +17,6 @@ let good;
 let computerTurn;
 let intervalID;
 let winner;
-strict.addEventListener('click',(event) => {
-     if(strict.checked == true){
-          strictMode = true;
-     }else{
-          strictMode = false;
-     }
-});
-on.addEventListener('click',(event) => {
-     if(on.checked == true){
-          onMode = true;
-          turn.innerHTML = '-';
-     }else{
-          onMode = false;
-          turn.innerHTML = '';
-          clearColor();
-          clearInterval(intervalID);
-     }
-});
-start.addEventListener('click',(event) => {
-     if(onMode || winner) play();
-});
 function play(){
      winner = false;
      order = [];
@@ -52,25 +31,6 @@ function play(){
      }
      computerTurn = true;
      intervalID = setInterval(gameTurn,800);
-}
-function gameTurn(){
-     onMode = false;
-     if(flash == turnMode){
-          clearInterval(intervalID);
-          computerTurn = false;
-          clearColor();
-          onMode = true;
-     }
-     if(computerTurn){
-          clearColor();
-          setTimeout(() => {
-               if(order[flash] == 1) one();
-               if(order[flash] == 2) two();
-               if(order[flash] == 3) three();
-               if(order[flash] == 4) four();
-               flash++;
-          },200);
-     }
 }
 function one(){
      if(noise){
@@ -116,6 +76,86 @@ function flashColor(){
      bottomleft.style.backgroundColor = 'yellow';
      bottomright.style.backgroundColor = 'lightskyblue';
 }
+function gameTurn(){
+     onMode = false;
+     if(flash == turnMode){
+          clearInterval(intervalID);
+          computerTurn = false;
+          clearColor();
+          onMode = true;
+     }
+     if(computerTurn){
+          clearColor();
+          setTimeout(() => {
+               if(order[flash] == 1) one();
+               if(order[flash] == 2) two();
+               if(order[flash] == 3) three();
+               if(order[flash] == 4) four();
+               flash++;
+          },200);
+     }
+}
+function winGame(){
+     flashColor();
+     turn.innerHTML = 'WINNER!';
+     onMode = false;
+     winner = true;
+}
+function check(){
+     if(playerOrder[playerOrder.length - 1] !== order[playerOrder.length - 1]){
+          good = false;
+     }
+     if(playerOrder.length == 3 && good){
+          winGame();
+     }
+     if(good == false){
+          flashColor();
+          turn.innerHTML = 'NO!';
+          setTimeout(() => {
+               turn.innerHTML = turnMode;
+               clearColor();
+               if(strictMode){
+                    play();
+               }else{
+                    computerTurn = true;
+                    flash = 0;
+                    playerOrder = [];
+                    good = true;
+                    intervalID = setInterval(gameTurn,800);
+               }
+          },800);
+          noise = false;
+     }
+     if(turnMode == playerOrder.length && good && !winner){
+          turnMode++;
+          playerOrder = [];
+          computerTurn = true;
+          flash = 0;
+          turn.innerHTML = turnMode;
+          intervalID = setInterval(gameTurn,800);
+     }
+}
+strict.addEventListener('click',(event) => {
+     if(strict.checked == true){
+          strictMode = true;
+     }else{
+          strictMode = false;
+     }
+});
+on.addEventListener('click',(event) => {
+     if(on.checked == true){
+          onMode = true;
+          turn.innerHTML = '-';
+     }else{
+          onMode = false;
+          turn.innerHTML = '';
+          clearColor();
+          clearInterval(intervalID);
+     }
+});
+start.addEventListener('click',(event) => {
+     if(onMode || winner) play();
+});
 topleft.addEventListener('click',(event) => {
      if(onMode){
           playerOrder.push(1);
@@ -164,43 +204,3 @@ bottomright.addEventListener('click',(event) => {
           }
      }
 });
-function check(){
-     if(playerOrder[playerOrder.length - 1] !== order[playerOrder.length - 1]){
-          good = false;
-     }
-     if(playerOrder.length == 3 && good){
-          winGame();
-     }
-     if(good == false){
-          flashColor();
-          turn.innerHTML = 'NO!';
-          setTimeout(() => {
-               turn.innerHTML = turnMode;
-               clearColor();
-               if(strictMode){
-                    play();
-               }else{
-                    computerTurn = true;
-                    flash = 0;
-                    playerOrder = [];
-                    good = true;
-                    intervalID = setInterval(gameTurn,800);
-               }
-          },800);
-          noise = false;
-     }
-     if(turnMode == playerOrder.length && good && !winner){
-          turnMode++;
-          playerOrder = [];
-          computerTurn = true;
-          flash = 0;
-          turn.innerHTML = turnMode;
-          intervalID = setInterval(gameTurn,800);
-     }
-}
-function winGame(){
-     flashColor();
-     turn.innerHTML = 'WINNER!';
-     onMode = false;
-     winner = true;
-}
